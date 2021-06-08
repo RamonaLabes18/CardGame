@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Cards;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Card_game
 {
