@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\rorlab\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\rorlab\\.nuget\\packages"
+    ]
+  }
+}

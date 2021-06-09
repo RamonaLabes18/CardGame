@@ -1,0 +1,13 @@
+C:\Users\rorlab\source\repos\Card_game\Card_game\bin\Debug\netcoreapp3.1\Card_game.exe
+C:\Users\rorlab\source\repos\Card_game\Card_game\bin\Debug\netcoreapp3.1\Card_game.deps.json
+C:\Users\rorlab\source\repos\Card_game\Card_game\bin\Debug\netcoreapp3.1\Card_game.runtimeconfig.json
+C:\Users\rorlab\source\repos\Card_game\Card_game\bin\Debug\netcoreapp3.1\Card_game.runtimeconfig.dev.json
+C:\Users\rorlab\source\repos\Card_game\Card_game\bin\Debug\netcoreapp3.1\Card_game.dll
+C:\Users\rorlab\source\repos\Card_game\Card_game\bin\Debug\netcoreapp3.1\Card_game.pdb
+C:\Users\rorlab\source\repos\Card_game\Card_game\obj\Debug\netcoreapp3.1\Card_game.csproj.AssemblyReference.cache
+C:\Users\rorlab\source\repos\Card_game\Card_game\obj\Debug\netcoreapp3.1\Card_game.AssemblyInfoInputs.cache
+C:\Users\rorlab\source\repos\Card_game\Card_game\obj\Debug\netcoreapp3.1\Card_game.AssemblyInfo.cs
+C:\Users\rorlab\source\repos\Card_game\Card_game\obj\Debug\netcoreapp3.1\Card_game.csproj.CoreCompileInputs.cache
+C:\Users\rorlab\source\repos\Card_game\Card_game\obj\Debug\netcoreapp3.1\Card_game.dll
+C:\Users\rorlab\source\repos\Card_game\Card_game\obj\Debug\netcoreapp3.1\Card_game.pdb
+C:\Users\rorlab\source\repos\Card_game\Card_game\obj\Debug\netcoreapp3.1\Card_game.genruntimeconfig.cache
