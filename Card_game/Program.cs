@@ -9,10 +9,9 @@ namespace Card_game
         static void Main(string[] args)
         {
 
-            CardDeck drawPile = new CardDeck();
+            CardDeck cardsDeck = new CardDeck();
             List<Card> DiscardPile = new List<Card>();
-            drawPile.Shuffle();
-            drawPile.DisplaytheDeck();
+            cardsDeck.Shuffle();
 
 
             Console.WriteLine("How many players are you ?");
@@ -28,22 +27,9 @@ namespace Card_game
                 });
             }
 
-            //Deal 5 cards to each player
 
-            GameManager game = new GameManager();
-            Player players = new Player();
-
-            game.DealCard(playerList, numPlayers, drawPile);
-            
-            //cartili jucatorului din mana
-            foreach (var player in playerList)
-            {
-                player.ShowHand();
-            }
-
-            Console.ReadLine();
-
-            game.AddCardToDiscardPile(DiscardPile, drawPile);
+            GameManager game = new GameManager(cardsDeck,playerList);
+            game.PlayGame();
 
 
 

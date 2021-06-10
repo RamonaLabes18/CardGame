@@ -9,12 +9,11 @@ namespace Cards
         public CardSuit Suit { get; set; }
 
 
-        public string DisplayValue
+        public override string ToString() /// aici tostring
         {
-            get
-            {
-                return Value.ToString() + " " + Suit.ToString();
-            }
+            
+               return Value.ToString() + " " + Suit.ToString();
+            
         }
 
     }

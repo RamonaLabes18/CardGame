@@ -19,9 +19,8 @@ namespace Card_game
             Console.WriteLine("Player " + Position + "'s Hand: ");
             foreach (var card in Hand)
             {
-                Console.Write(Enum.GetName(typeof(CardSuit), card.Suit) + " " + Enum.GetName(typeof(CardValue), card.Value) + "  ");
+                Console.WriteLine(card);
             }
-            Console.WriteLine("");
         }
 
     }
