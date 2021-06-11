@@ -12,19 +12,19 @@ namespace Card_game
         public List<Player> PlayerList { get; set; }
         public List<Card> PileCards { get; set; }
 
+        private LinkedList<Player> linkPlayers;
         private Card lastCard;
-
         private Player turnWinner;
 
         //operatii pt joc 
 
-        public GameManager(CardDeck deck,List<Player> players)
+        public GameManager(CardDeck deck, List<Player> players)
         {
             this.CardDeck = deck;
             this.PlayerList = players;
             this.PileCards = new List<Card>();
+            this.linkPlayers = new LinkedList<Player>(players);
         }
-
 
         //METODA PLAY PT ALGORITM
         public void PlayGame()
@@ -33,80 +33,33 @@ namespace Card_game
             lastCard = CardDeck.Deal();
             PileCards.Add(lastCard);
             ShowHand();
-            //turnWinner = PlayerList[0];
-            var numberOfPlayers = PlayerList.Count();
-          
-            //
-            for (var i = 0; i < numberOfPlayers; i++)
+            turnWinner = PlayerList[0];
+            var currentPlayer = linkPlayers.Find(turnWinner);
+
+            do
             {
-                turnWinner = PlayerList[i];
-                while (!PlayerList.Any(x => !x.Hand.Any()))
+                Console.WriteLine("Pile Card is : " + lastCard);
+                lastCard =  CheckSpecialCard(lastCard);
+                ShowHand();
+                
+                if (currentPlayer.Next == null)
                 {
-            //
-                    if (lastCard.Value == CardValue.Four)
-                    {
-                        Boolean result = CompareCards(lastCard, turnWinner.Hand);
-                        if (result)
-                        {
-                            Stack<Card> stack = new Stack<Card>();
-                            stack = findCards(lastCard, turnWinner.Hand);
-                            lastCard = stack.Pop();
-                            turnWinner = PlayerList[i + 1];
-                        }
-                        else
-                        {
-                            lastCard.Value = CardValue.Four;
-                            turnWinner = PlayerList[i + 1];
-                        }
-                    }
-
-                    if (lastCard.Value == CardValue.Two)
-                    {
-                        Boolean result = CompareCards(lastCard , turnWinner.Hand);
-                        if (result)
-                        {
-                            Stack<Card> stack = new Stack<Card>();
-                            stack = findCards(lastCard, turnWinner.Hand);
-                            lastCard = stack.Pop();
-                            turnWinner = PlayerList[i + 1];
-                        }
-                        else
-                        {
-                            for (i = 0; i < 2; i++)
-                            {
-                                turnWinner.Hand.Add(CardDeck.Deal());
-                                turnWinner = PlayerList[i + 1];
-                            }
-                        }
-                    }
-
-                    if (lastCard.Value == CardValue.Three)
-                    {
-                        Boolean result = CompareCards(lastCard, turnWinner.Hand);
-                        if (result)
-                        {
-                            Stack<Card> stack = new Stack<Card>();
-                            stack = findCards(lastCard, turnWinner.Hand);
-                            lastCard = stack.Pop();
-                            turnWinner = PlayerList[i + 1];
-
-                        }
-                        else
-                        {
-                            for (i = 0; i < 2; i++)
-                            {
-                                turnWinner.Hand.Add(CardDeck.Deal());
-                            }
-                        }
-                    }
-
-                    
-
+                    currentPlayer = linkPlayers.First;
+                }
+                else
+                {
+                    currentPlayer = currentPlayer.Next;
                 }
             }
+            while (currentPlayer.Value != turnWinner);
+
 
 
         }
+        //playturn(player)
+        //verificare dupa fiecare jucator
+        //{
+
 
         public void ShowHand()
         {
@@ -121,9 +74,9 @@ namespace Card_game
         public void DealCard()
         {
 
-            foreach(var player in PlayerList)
+            foreach (var player in PlayerList)
             {
-                for(int i=0; i<5; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     player.Hand.Add(CardDeck.Deal());
                 }
@@ -131,7 +84,7 @@ namespace Card_game
 
         }
 
-        public Boolean CompareCards(Card lastCard, List<Card> Hand)
+        public Boolean CompareCardsValue(Card lastCard, List<Card> Hand)
         {
             foreach (var card in Hand)
             {
@@ -144,8 +97,20 @@ namespace Card_game
             return false;
         }
 
+        public Boolean CompareCardValueOrSuit(Card lastCard, List<Card> Hand)
+        {
+            foreach (var card in Hand)
+            {
+                if (card.Suit == lastCard.Suit || card.Value == lastCard.Value)
+                {
+                    return true;
+                }
+            }
 
-        public Stack<Card> findCards(Card lastCard, List<Card> Hand)
+            return false;
+        }
+
+        public Stack<Card> findCardsValue(Card lastCard, List<Card> Hand)
         {
             Stack<Card> cardsFind = new Stack<Card>();
             foreach (var card in Hand)
@@ -159,10 +124,92 @@ namespace Card_game
             return cardsFind;
         }
 
+        public Stack<Card> findCardsValueOrSuit(Card lastCard, List<Card> Hand)
+        {
+            Stack<Card> cardsFind = new Stack<Card>();
+            foreach (var card in Hand)
+            {
+                if (card.Value == lastCard.Value || card.Suit== lastCard.Suit)
+                {
+                    cardsFind.Push(card);
+                }
+            }
 
+            return cardsFind;
+        }
 
+        public Card CheckSpecialCard(Card lastCard)
+        {
+            if (lastCard.Value == CardValue.Four || lastCard.Value == CardValue.Two || lastCard.Value == CardValue.Three)
+            {
+                Boolean result = CompareCardsValue(lastCard, turnWinner.Hand);
+                if (result)
+                {
+                    Stack<Card> stack = new Stack<Card>();
+                    stack = findCardsValue(lastCard, turnWinner.Hand);
+                    lastCard = stack.Pop();
+                    turnWinner.Hand.Remove(lastCard);
+                }
 
+                else
+                {
+                    if (lastCard.Value == CardValue.Four)
+                    {
+                        lastCard.Value = CardValue.Four;
+                    }
+                    else
+                    {
+                        int number;
+                        if (lastCard.Value == CardValue.Two)
+                        {
+                            number = 2;
+                        }
+                        else
+                        {
+                            number = 3;
+                        }
+
+                        for (int i = 0; i < number; i++)
+                        {
+                            turnWinner.Hand.Add(CardDeck.Deal());
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Boolean result = CompareCardValueOrSuit(lastCard, turnWinner.Hand);
+
+                if (result)
+                {
+                    Stack<Card> stack = new Stack<Card>();
+                    stack = findCardsValueOrSuit(lastCard, turnWinner.Hand);
+                    lastCard = stack.Pop();
+                    turnWinner.Hand.Remove(lastCard);
+
+                    if (lastCard.Value == CardValue.Ace)
+                    {
+                        lastCard.Suit = DominantSuit(turnWinner.Hand);
+                    }
+                }
+                else
+                {
+                    turnWinner.Hand.Add(CardDeck.Deal());
+                }
+            }
+
+            return lastCard;
+        }
+
+        
+        public CardSuit DominantSuit(List<Card> Hand)
+        {
+            var suit = Hand.GroupBy(x => x.Suit).OrderByDescending(x => x.Count());
+            return suit.First().First().Suit;
+        }
 
 
     }
 }
+
+

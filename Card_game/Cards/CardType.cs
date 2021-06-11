@@ -1,11 +1,6 @@
 ﻿namespace Cards
 {
-    public enum CardColor 
-    {
-        Red,
-        Black
-    }
-
+    
     public enum CardValue 
     {
         Two,

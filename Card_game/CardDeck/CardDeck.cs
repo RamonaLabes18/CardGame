@@ -28,7 +28,6 @@ namespace Card_game
             }
 
             Cards = new Stack<Card>(initialList);
-            //}
 
         }
         public Card Deal()
