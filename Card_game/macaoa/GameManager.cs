@@ -35,17 +35,29 @@ namespace Card_game
             ShowHand();
             //turnWinner = PlayerList[0];
             var numberOfPlayers = PlayerList.Count();
-
+          
+            //
             for (var i = 0; i < numberOfPlayers; i++)
             {
                 turnWinner = PlayerList[i];
                 while (!PlayerList.Any(x => !x.Hand.Any()))
                 {
-
+            //
                     if (lastCard.Value == CardValue.Four)
+                    {
+                        Boolean result = CompareCards(lastCard, turnWinner.Hand);
+                        if (result)
+                        {
+                            Stack<Card> stack = new Stack<Card>();
+                            stack = findCards(lastCard, turnWinner.Hand);
+                            lastCard = stack.Pop();
+                            turnWinner = PlayerList[i + 1];
+                        }
+                        else
                         {
                             lastCard.Value = CardValue.Four;
-                            turnWinner = PlayerList[i+1];
+                            turnWinner = PlayerList[i + 1];
+                        }
                     }
 
                     if (lastCard.Value == CardValue.Two)
@@ -53,13 +65,17 @@ namespace Card_game
                         Boolean result = CompareCards(lastCard , turnWinner.Hand);
                         if (result)
                         {
-
+                            Stack<Card> stack = new Stack<Card>();
+                            stack = findCards(lastCard, turnWinner.Hand);
+                            lastCard = stack.Pop();
+                            turnWinner = PlayerList[i + 1];
                         }
                         else
                         {
                             for (i = 0; i < 2; i++)
                             {
                                 turnWinner.Hand.Add(CardDeck.Deal());
+                                turnWinner = PlayerList[i + 1];
                             }
                         }
                     }
@@ -69,6 +85,10 @@ namespace Card_game
                         Boolean result = CompareCards(lastCard, turnWinner.Hand);
                         if (result)
                         {
+                            Stack<Card> stack = new Stack<Card>();
+                            stack = findCards(lastCard, turnWinner.Hand);
+                            lastCard = stack.Pop();
+                            turnWinner = PlayerList[i + 1];
 
                         }
                         else
@@ -79,6 +99,8 @@ namespace Card_game
                             }
                         }
                     }
+
+                    
 
                 }
             }
@@ -123,7 +145,19 @@ namespace Card_game
         }
 
 
+        public Stack<Card> findCards(Card lastCard, List<Card> Hand)
+        {
+            Stack<Card> cardsFind = new Stack<Card>();
+            foreach (var card in Hand)
+            {
+                if (card.Value == lastCard.Value)
+                {
+                    cardsFind.Push(card);
+                }
+            }
 
+            return cardsFind;
+        }
 
 
 
