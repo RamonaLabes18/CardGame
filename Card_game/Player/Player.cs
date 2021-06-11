@@ -14,6 +14,7 @@ namespace Card_game
             Hand = new List<Card>();
         }
 
+
         public void ShowHand()
         {
             Console.WriteLine("Player " + Position + "'s Hand: ");
@@ -22,7 +23,6 @@ namespace Card_game
                 Console.WriteLine(card);
             }
         }
-
     }
 
 }

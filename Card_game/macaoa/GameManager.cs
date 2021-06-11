@@ -12,6 +12,10 @@ namespace Card_game
         public List<Player> PlayerList { get; set; }
         public List<Card> PileCards { get; set; }
 
+        private Card lastCard;
+
+        private Player turnWinner;
+
         //operatii pt joc 
 
         public GameManager(CardDeck deck,List<Player> players)
@@ -22,11 +26,64 @@ namespace Card_game
         }
 
 
-        //MAETODA PLAY PT ALGORITM
+        //METODA PLAY PT ALGORITM
         public void PlayGame()
         {
             DealCard();
+            lastCard = CardDeck.Deal();
+            PileCards.Add(lastCard);
             ShowHand();
+            //turnWinner = PlayerList[0];
+            var numberOfPlayers = PlayerList.Count();
+
+            for (var i = 0; i < numberOfPlayers; i++)
+            {
+                turnWinner = PlayerList[i];
+                while (!PlayerList.Any(x => !x.Hand.Any()))
+                {
+
+                    if (lastCard.Value == CardValue.Four)
+                        {
+                            lastCard.Value = CardValue.Four;
+                            turnWinner = PlayerList[i+1];
+                    }
+
+                    if (lastCard.Value == CardValue.Two)
+                    {
+                        Boolean result = CompareCards(lastCard , turnWinner.Hand);
+                        if (result)
+                        {
+
+                        }
+                        else
+                        {
+                            for (i = 0; i < 2; i++)
+                            {
+                                turnWinner.Hand.Add(CardDeck.Deal());
+                            }
+                        }
+                    }
+
+                    if (lastCard.Value == CardValue.Three)
+                    {
+                        Boolean result = CompareCards(lastCard, turnWinner.Hand);
+                        if (result)
+                        {
+
+                        }
+                        else
+                        {
+                            for (i = 0; i < 2; i++)
+                            {
+                                turnWinner.Hand.Add(CardDeck.Deal());
+                            }
+                        }
+                    }
+
+                }
+            }
+
+
         }
 
         public void ShowHand()
@@ -52,13 +109,25 @@ namespace Card_game
 
         }
 
-        //Add a single card to the discard pile
-        //public void AddCardToDiscardPile(List<Card> DiscardPile, CardDeck drawPile)
+        public Boolean CompareCards(Card lastCard, List<Card> Hand)
+        {
+            foreach (var card in Hand)
+            {
+                if (card.Value == lastCard.Value)
+                {
+                    return true;
+                }
+            }
 
-        //{
-        //    DiscardPile.Add(drawPile.Cards.First());
-        //    drawPile.Cards.RemoveAt(0);
-        //}
+            return false;
+        }
+
+
+
+
+
+
+
 
 
     }
