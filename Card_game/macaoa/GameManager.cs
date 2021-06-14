@@ -31,6 +31,7 @@ namespace Card_game
         {
             DealCard();
             lastCard = CardDeck.Deal();
+            CheckPileCard(lastCard);
             PileCards.Add(lastCard);
             ShowHand();
             turnWinner = PlayerList[0];
@@ -38,17 +39,25 @@ namespace Card_game
 
             do
             {
+                Player playerTurn = currentPlayer.Value;
                 Console.WriteLine("Pile Card is : " + lastCard);
-                lastCard =  CheckSpecialCard(lastCard);
+                lastCard =  CheckSpecialCard(lastCard, playerTurn);
+                PileCards.Add(lastCard);
                 ShowHand();
-                
-                if (currentPlayer.Next == null)
+                if (CheckEmptyHand(currentPlayer.Value) == false)
                 {
-                    currentPlayer = linkPlayers.First;
+                    if (currentPlayer.Next == null)
+                    {
+                        currentPlayer = linkPlayers.First;
+                    }
+                    else
+                    {
+                        currentPlayer = currentPlayer.Next;
+                    }
                 }
                 else
                 {
-                    currentPlayer = currentPlayer.Next;
+                    Console.WriteLine("Winner is player  " + currentPlayer.Value.Position);
                 }
             }
             while (currentPlayer.Value != turnWinner);
@@ -138,17 +147,17 @@ namespace Card_game
             return cardsFind;
         }
 
-        public Card CheckSpecialCard(Card lastCard)
+        public Card CheckSpecialCard(Card lastCard, Player playerTurn)
         {
             if (lastCard.Value == CardValue.Four || lastCard.Value == CardValue.Two || lastCard.Value == CardValue.Three)
             {
-                Boolean result = CompareCardsValue(lastCard, turnWinner.Hand);
+                Boolean result = CompareCardsValue(lastCard, playerTurn.Hand);
                 if (result)
                 {
                     Stack<Card> stack = new Stack<Card>();
-                    stack = findCardsValue(lastCard, turnWinner.Hand);
+                    stack = findCardsValue(lastCard, playerTurn.Hand);
                     lastCard = stack.Pop();
-                    turnWinner.Hand.Remove(lastCard);
+                    playerTurn.Hand.Remove(lastCard);
                 }
 
                 else
@@ -171,36 +180,35 @@ namespace Card_game
 
                         for (int i = 0; i < number; i++)
                         {
-                            turnWinner.Hand.Add(CardDeck.Deal());
+                            playerTurn.Hand.Add(CardDeck.Deal());
                         }
                     }
                 }
             }
             else
             {
-                Boolean result = CompareCardValueOrSuit(lastCard, turnWinner.Hand);
+                Boolean result = CompareCardValueOrSuit(lastCard, playerTurn.Hand);
 
                 if (result)
                 {
                     Stack<Card> stack = new Stack<Card>();
-                    stack = findCardsValueOrSuit(lastCard, turnWinner.Hand);
+                    stack = findCardsValueOrSuit(lastCard, playerTurn.Hand);
                     lastCard = stack.Pop();
-                    turnWinner.Hand.Remove(lastCard);
+                    playerTurn.Hand.Remove(lastCard);
 
                     if (lastCard.Value == CardValue.Ace)
                     {
-                        lastCard.Suit = DominantSuit(turnWinner.Hand);
+                        lastCard.Suit = DominantSuit(playerTurn.Hand);
                     }
                 }
                 else
                 {
-                    turnWinner.Hand.Add(CardDeck.Deal());
+                    playerTurn.Hand.Add(CardDeck.Deal());
                 }
             }
 
             return lastCard;
         }
-
         
         public CardSuit DominantSuit(List<Card> Hand)
         {
@@ -208,6 +216,24 @@ namespace Card_game
             return suit.First().First().Suit;
         }
 
+        public void CheckPileCard(Card lastCard)
+        {
+            if(lastCard.Value==CardValue.Ace || lastCard.Value == CardValue.Four || lastCard.Value == CardValue.Three || lastCard.Value == CardValue.Two)
+            {
+                lastCard = CardDeck.Deal();
+            }
+        }
+
+        public bool  CheckEmptyHand(Player currentPlayer)
+        {
+            bool result = false;
+            if (currentPlayer.Hand.Count() == 0)
+            {
+                turnWinner = currentPlayer;
+                result = true;
+            }
+            return result;
+        }
 
     }
 }
