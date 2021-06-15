@@ -15,34 +15,23 @@ namespace Card_game
             if (gameType=="razboi")
             {
                 IGame _gameType = new RazboiFactory().CreateGame();
+                CardDeck cardDeck= _gameType.GetCardDeck();
+                List<Player> playerList = _gameType.GetPlayerList();
+                _gameType.play(cardDeck, playerList);
             }
             if (gameType == "septica")
             {
                 IGame _gameType = new SepticaFactory().CreateGame();
+                CardDeck cardDeck = _gameType.GetCardDeck();
+                List<Player> playerList = _gameType.GetPlayerList();
+                _gameType.play(cardDeck, playerList);
             }
             if (gameType == "macaoua")
             {
                 IGame _gameType = new MacaouaFactory().CreateGame();
-            }
-
-            
-
-            CardDeck cardsDeck = new CardDeck();
-            List<Card> DiscardPile = new List<Card>();
-            cardsDeck.Shuffle();
-
-
-            Console.WriteLine("How many players are you ?");
-            int numPlayers = Convert.ToInt32(Console.ReadLine());
-
-            List<Player> playerList = new List<Player>();
-            //Create the players
-            for (int i = 1; i <= numPlayers; i++)
-            {
-                playerList.Add(new Player()
-                {
-                    Position = i
-                });
+                CardDeck cardDeck = _gameType.GetCardDeck();
+                List<Player> playerList = _gameType.GetPlayerList();
+                _gameType.play(cardDeck, playerList);
             }
 
 

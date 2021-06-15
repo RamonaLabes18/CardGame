@@ -4,11 +4,18 @@ using System.Text;
 
 namespace Card_game.Games
 {
-    class Razboi : IGame
+    class Razboi : ComunGameAction
+
     {
-        public string GetGameType()
+    
+        public override string GetGameType()
         {
-            return " Razboi";
+            return "Razboi";
+        }
+
+        public override Player play(CardDeck cardDeck, List<Player> players)
+        {
+            return players[0];
         }
     }
 }

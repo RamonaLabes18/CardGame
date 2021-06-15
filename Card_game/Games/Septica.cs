@@ -4,11 +4,17 @@ using System.Text;
 
 namespace Card_game.Games
 {
-    class Septica : IGame
+    class Septica : ComunGameAction
     {
-        public string GetGameType()
+      
+        public override string GetGameType()
         {
             return "Septica";
+        }
+
+        public override Player play(CardDeck cardDeck, List<Player> players)
+        {
+            return players[0];
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Linq;
 namespace Card_game
 {
 
-    class Macaoua : IGame
+    class Macaoua : ComunGameAction
     {
         public CardDeck CardDeck { get; set; }
         public List<Player> PlayerList { get; set; }
@@ -18,7 +18,8 @@ namespace Card_game
         private Card lastCard;
         private Player turnWinner;
         private Player lastPlayerOfList;
-        bool control = false;
+        private LinkedListNode<Player> lastPlayer;
+        private LinkedListNode<Player> currentPlayer;
 
         //operatii pt joc 
         public Macaoua()
@@ -36,64 +37,8 @@ namespace Card_game
             }
 
         }
-
         //METODA PLAY PT ALGORITM
-        public void PlayGame()
-        {
-
-            DealCard();
-            lastCard = CardDeck.Deal();
-            lastCard = CheckPileCard(lastCard);
-            PileCards.Add(lastCard);
-            Console.WriteLine("Pile Card is : " + lastCard);
-            ShowHand();
-            turnWinner = PlayerList[0];
-            lastPlayerOfList = PlayerList.Last();
-            var currentPlayer = linkPlayers.Find(turnWinner);
-            var lastPlayer = linkPlayers.Find(lastPlayerOfList);
-            
-           
-            do
-            {
-                
-                if (CardDeck.Cards.Count < 2)
-                {
-                    CardDeck = CreateNewCardDeck(PileCards);
-                }
-
-                turnWinner = null;
-                bool control = ReturnControl(currentPlayer, lastPlayer);
-                Player playerTurn = currentPlayer.Value;
-                lastCard = CheckSpecialCard(lastCard, playerTurn, control);
-                PileCards.Add(lastCard);
-                Console.WriteLine("Pile Card is : " + lastCard);
-                ShowHand();
-                if (lastCard.Value != CardValue.Three || lastCard.Value != CardValue.Two || lastCard.Value != CardValue.Four)
-                {
-                    ResetTakeCard(currentPlayer, lastPlayer);
-                    
-                }
-                if (CheckEmptyHand(currentPlayer.Value) == false)
-                {
-                    if (currentPlayer.Next == null)
-                    { 
-                        currentPlayer = linkPlayers.First;
-                    }
-                    else
-                    {
-                        currentPlayer = currentPlayer.Next;
-                    }
-                }
-                else
-                {
-                    turnWinner = currentPlayer.Value;
-                    Console.WriteLine("Winner is player  " + turnWinner.Position);
-                }
-            }
-            while (turnWinner == null);
-
-        }
-      
+        
         public void ShowHand()
         {
             foreach (var player in PlayerList)
@@ -306,10 +251,68 @@ namespace Card_game
             return newDeck;
         }
 
-        public string GetGameType()
+        public override Player play(CardDeck deck, List<Player> players)
+        {
+            CardDeck = deck;
+            PlayerList = players;
+            DealCard();
+            lastCard = CardDeck.Deal();
+            lastCard = CheckPileCard(lastCard);
+            PileCards.Add(lastCard);
+            Console.WriteLine("Pile Card is : " + lastCard);
+            ShowHand();
+            turnWinner = PlayerList[0];
+            lastPlayerOfList = PlayerList.Last();
+            currentPlayer = linkPlayers.Find(turnWinner);
+            lastPlayer = linkPlayers.Find(lastPlayerOfList);
+            do
+            {
+
+                if (CardDeck.Cards.Count < 2)
+                {
+                    CardDeck = CreateNewCardDeck(PileCards);
+                }
+
+                turnWinner = null;
+                bool control = ReturnControl(currentPlayer, lastPlayer);
+                Player playerTurn = currentPlayer.Value;
+                lastCard = CheckSpecialCard(lastCard, playerTurn, control);
+                PileCards.Add(lastCard);
+                Console.WriteLine("Pile Card is : " + lastCard);
+                ShowHand();
+                if (lastCard.Value != CardValue.Three || lastCard.Value != CardValue.Two || lastCard.Value != CardValue.Four)
+                {
+                    ResetTakeCard(currentPlayer, lastPlayer);
+
+                }
+                if (CheckEmptyHand(currentPlayer.Value) == false)
+                {
+                    if (currentPlayer.Next == null)
+                    {
+                        currentPlayer = linkPlayers.First;
+                    }
+                    else
+                    {
+                        currentPlayer = currentPlayer.Next;
+                    }
+                }
+                else
+                {
+                    turnWinner = currentPlayer.Value;
+                    Console.WriteLine("Winner is player  " + turnWinner.Position);
+                }
+            }
+            while (turnWinner == null);
+
+            return turnWinner;
+        }
+
+        public override string GetGameType()
         {
             return "Macaoua";
         }
+
+       
     }
 }
 
