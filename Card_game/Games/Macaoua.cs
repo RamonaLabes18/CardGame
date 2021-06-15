@@ -1,4 +1,5 @@
-﻿using Cards;
+﻿using Card_game.Games;
+using Cards;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Linq;
 namespace Card_game
 {
 
-    class GameManager
+    class Macaoua : IGame
     {
         public CardDeck CardDeck { get; set; }
         public List<Player> PlayerList { get; set; }
@@ -20,8 +21,9 @@ namespace Card_game
         bool control = false;
 
         //operatii pt joc 
-
-        public GameManager(CardDeck deck, List<Player> players)
+        public Macaoua()
+        { }
+        public Macaoua(CardDeck deck, List<Player> players)
         {
             this.CardDeck = deck;
             this.PlayerList = players;
@@ -41,14 +43,15 @@ namespace Card_game
 
             DealCard();
             lastCard = CardDeck.Deal();
-            CheckPileCard(lastCard);
+            lastCard = CheckPileCard(lastCard);
             PileCards.Add(lastCard);
+            Console.WriteLine("Pile Card is : " + lastCard);
             ShowHand();
             turnWinner = PlayerList[0];
             lastPlayerOfList = PlayerList.Last();
             var currentPlayer = linkPlayers.Find(turnWinner);
             var lastPlayer = linkPlayers.Find(lastPlayerOfList);
-            Console.WriteLine("Pile Card is : " + lastCard); 
+            
            
             do
             {
@@ -63,11 +66,13 @@ namespace Card_game
                 Player playerTurn = currentPlayer.Value;
                 lastCard = CheckSpecialCard(lastCard, playerTurn, control);
                 PileCards.Add(lastCard);
+                Console.WriteLine("Pile Card is : " + lastCard);
                 ShowHand();
-                //if (lastCard.Value != CardValue.Three || lastCard.Value != CardValue.Two || lastCard.Value != CardValue.Four)
-                //{   ResetTakeCard(currentPlayer, lastPlayer);
-                //    Console.WriteLine("Pile Card is : " + lastCard);
-                //}
+                if (lastCard.Value != CardValue.Three || lastCard.Value != CardValue.Two || lastCard.Value != CardValue.Four)
+                {
+                    ResetTakeCard(currentPlayer, lastPlayer);
+                    
+                }
                 if (CheckEmptyHand(currentPlayer.Value) == false)
                 {
                     if (currentPlayer.Next == null)
@@ -96,7 +101,7 @@ namespace Card_game
                 player.ShowHand();
             }
 
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         public void DealCard()
@@ -222,10 +227,11 @@ namespace Card_game
                     playerTurn.Hand.Remove(lastCard);
                   //  takeCards[playerTurn] = true;
 
-                    if (lastCard.Value == CardValue.Ace)
+                    if (lastCard.Value == CardValue.Ace && playerTurn.Hand.Count>1)
                     {
                         lastCard.Suit = DominantSuit(playerTurn.Hand);
                     }
+              
                 }
                 else
                 {
@@ -237,17 +243,19 @@ namespace Card_game
         }
 
         public CardSuit DominantSuit(List<Card> Hand)
-        {
+        { 
             var suit = Hand.GroupBy(x => x.Suit).OrderByDescending(x => x.Count());
             return suit.First().First().Suit;
         }
 
-        public void CheckPileCard(Card lastCard)
+        public Card CheckPileCard(Card lastCard)
         {
             if (lastCard.Value == CardValue.Ace || lastCard.Value == CardValue.Four || lastCard.Value == CardValue.Three || lastCard.Value == CardValue.Two)
             {
                 lastCard = CardDeck.Deal();
+
             }
+            return lastCard;
         }
 
         public bool CheckEmptyHand(Player currentPlayer)
@@ -296,6 +304,11 @@ namespace Card_game
             PileCards.Clear();
             PileCards.Add(currentCard);
             return newDeck;
+        }
+
+        public string GetGameType()
+        {
+            return "Macaoua";
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Cards;
+﻿using Card_game.Games;
+using Cards;
 using System;
 using System.Collections.Generic;
 
@@ -8,6 +9,23 @@ namespace Card_game
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Which type of game do you want to play ?");
+            string gameType = (Console.ReadLine());
+
+            if (gameType=="razboi")
+            {
+                IGame _gameType = new RazboiFactory().CreateGame();
+            }
+            if (gameType == "septica")
+            {
+                IGame _gameType = new SepticaFactory().CreateGame();
+            }
+            if (gameType == "macaoua")
+            {
+                IGame _gameType = new MacaouaFactory().CreateGame();
+            }
+
+            
 
             CardDeck cardsDeck = new CardDeck();
             List<Card> DiscardPile = new List<Card>();
@@ -28,8 +46,8 @@ namespace Card_game
             }
 
 
-            GameManager game = new GameManager(cardsDeck,playerList);
-            game.PlayGame();
+          //  Macaoua game = new Macaoua(cardsDeck,playerList);
+           // game.PlayGame();
 
 
 
