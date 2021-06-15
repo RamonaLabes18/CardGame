@@ -13,8 +13,11 @@ namespace Card_game
         public List<Card> PileCards { get; set; }
 
         private LinkedList<Player> linkPlayers;
+        private Dictionary<Player, bool> takeCards;
         private Card lastCard;
         private Player turnWinner;
+        private Player lastPlayerOfList;
+        bool control = false;
 
         //operatii pt joc 
 
@@ -24,30 +27,51 @@ namespace Card_game
             this.PlayerList = players;
             this.PileCards = new List<Card>();
             this.linkPlayers = new LinkedList<Player>(players);
+            takeCards = new Dictionary<Player, bool>();
+            foreach (Player player in PlayerList)
+            {
+                takeCards.Add(player, false);
+            }
+
         }
 
         //METODA PLAY PT ALGORITM
         public void PlayGame()
         {
+
             DealCard();
             lastCard = CardDeck.Deal();
             CheckPileCard(lastCard);
             PileCards.Add(lastCard);
             ShowHand();
             turnWinner = PlayerList[0];
+            lastPlayerOfList = PlayerList.Last();
             var currentPlayer = linkPlayers.Find(turnWinner);
-
+            var lastPlayer = linkPlayers.Find(lastPlayerOfList);
+            Console.WriteLine("Pile Card is : " + lastCard); 
+           
             do
             {
+                
+                if (CardDeck.Cards.Count < 2)
+                {
+                    CardDeck = CreateNewCardDeck(PileCards);
+                }
+
+                turnWinner = null;
+                bool control = ReturnControl(currentPlayer, lastPlayer);
                 Player playerTurn = currentPlayer.Value;
-                Console.WriteLine("Pile Card is : " + lastCard);
-                lastCard =  CheckSpecialCard(lastCard, playerTurn);
+                lastCard = CheckSpecialCard(lastCard, playerTurn, control);
                 PileCards.Add(lastCard);
                 ShowHand();
+                //if (lastCard.Value != CardValue.Three || lastCard.Value != CardValue.Two || lastCard.Value != CardValue.Four)
+                //{   ResetTakeCard(currentPlayer, lastPlayer);
+                //    Console.WriteLine("Pile Card is : " + lastCard);
+                //}
                 if (CheckEmptyHand(currentPlayer.Value) == false)
                 {
                     if (currentPlayer.Next == null)
-                    {
+                    { 
                         currentPlayer = linkPlayers.First;
                     }
                     else
@@ -57,19 +81,14 @@ namespace Card_game
                 }
                 else
                 {
-                    Console.WriteLine("Winner is player  " + currentPlayer.Value.Position);
+                    turnWinner = currentPlayer.Value;
+                    Console.WriteLine("Winner is player  " + turnWinner.Position);
                 }
             }
-            while (currentPlayer.Value != turnWinner);
-
-
+            while (turnWinner == null);
 
         }
-        //playturn(player)
-        //verificare dupa fiecare jucator
-        //{
-
-
+      
         public void ShowHand()
         {
             foreach (var player in PlayerList)
@@ -138,7 +157,7 @@ namespace Card_game
             Stack<Card> cardsFind = new Stack<Card>();
             foreach (var card in Hand)
             {
-                if (card.Value == lastCard.Value || card.Suit== lastCard.Suit)
+                if (card.Value == lastCard.Value || card.Suit == lastCard.Suit)
                 {
                     cardsFind.Push(card);
                 }
@@ -147,46 +166,52 @@ namespace Card_game
             return cardsFind;
         }
 
-        public Card CheckSpecialCard(Card lastCard, Player playerTurn)
+        public Card CheckSpecialCard(Card lastCard, Player playerTurn, bool control)
         {
-            if (lastCard.Value == CardValue.Four || lastCard.Value == CardValue.Two || lastCard.Value == CardValue.Three)
-            {
-                Boolean result = CompareCardsValue(lastCard, playerTurn.Hand);
-                if (result)
-                {
-                    Stack<Card> stack = new Stack<Card>();
-                    stack = findCardsValue(lastCard, playerTurn.Hand);
-                    lastCard = stack.Pop();
-                    playerTurn.Hand.Remove(lastCard);
-                }
 
-                else
+            if ((lastCard.Value == CardValue.Four || lastCard.Value == CardValue.Two || lastCard.Value == CardValue.Three) & control == false)
+            {
                 {
-                    if (lastCard.Value == CardValue.Four)
+                    Boolean result = CompareCardsValue(lastCard, playerTurn.Hand);
+                    if (result)
                     {
-                        lastCard.Value = CardValue.Four;
+                        Stack<Card> stack = new Stack<Card>();
+                        stack = findCardsValue(lastCard, playerTurn.Hand);
+                        lastCard = stack.Pop();
+                        playerTurn.Hand.Remove(lastCard);
                     }
                     else
                     {
-                        int number;
-                        if (lastCard.Value == CardValue.Two)
+                        takeCards[playerTurn] = true;
                         {
-                            number = 2;
-                        }
-                        else
-                        {
-                            number = 3;
-                        }
+                            if (lastCard.Value == CardValue.Four)
+                            {
+                                lastCard.Value = CardValue.Four;
+                            }
+                            else
+                            {
+                                int number;
+                                if (lastCard.Value == CardValue.Two)
+                                {
+                                    number = 2;
+                                }
+                                else
+                                {
+                                    number = 3;
+                                }
 
-                        for (int i = 0; i < number; i++)
-                        {
-                            playerTurn.Hand.Add(CardDeck.Deal());
+                                for (int i = 0; i < number; i++)
+                                {
+                                    playerTurn.Hand.Add(CardDeck.Deal());
+                                }
+                            }
                         }
                     }
                 }
             }
             else
             {
+
                 Boolean result = CompareCardValueOrSuit(lastCard, playerTurn.Hand);
 
                 if (result)
@@ -195,6 +220,7 @@ namespace Card_game
                     stack = findCardsValueOrSuit(lastCard, playerTurn.Hand);
                     lastCard = stack.Pop();
                     playerTurn.Hand.Remove(lastCard);
+                  //  takeCards[playerTurn] = true;
 
                     if (lastCard.Value == CardValue.Ace)
                     {
@@ -209,7 +235,7 @@ namespace Card_game
 
             return lastCard;
         }
-        
+
         public CardSuit DominantSuit(List<Card> Hand)
         {
             var suit = Hand.GroupBy(x => x.Suit).OrderByDescending(x => x.Count());
@@ -218,13 +244,13 @@ namespace Card_game
 
         public void CheckPileCard(Card lastCard)
         {
-            if(lastCard.Value==CardValue.Ace || lastCard.Value == CardValue.Four || lastCard.Value == CardValue.Three || lastCard.Value == CardValue.Two)
+            if (lastCard.Value == CardValue.Ace || lastCard.Value == CardValue.Four || lastCard.Value == CardValue.Three || lastCard.Value == CardValue.Two)
             {
                 lastCard = CardDeck.Deal();
             }
         }
 
-        public bool  CheckEmptyHand(Player currentPlayer)
+        public bool CheckEmptyHand(Player currentPlayer)
         {
             bool result = false;
             if (currentPlayer.Hand.Count() == 0)
@@ -235,6 +261,42 @@ namespace Card_game
             return result;
         }
 
+        public bool ReturnControl(LinkedListNode<Player> currentPlayer, LinkedListNode<Player> lastPlayer)
+        {
+            bool control;
+            if (currentPlayer.Previous == null)
+            {
+                control = takeCards[lastPlayer.Value];
+            }
+            else
+            {
+                control = takeCards[currentPlayer.Previous.Value];
+            }
+
+            return control;
+        }
+
+        public void ResetTakeCard(LinkedListNode<Player> currentPlayer, LinkedListNode<Player> lastPlayer)
+        {
+            if (currentPlayer.Previous == null)
+            {
+                takeCards[lastPlayer.Value] = false;
+            }
+            else
+            {
+                takeCards[currentPlayer.Previous.Value] = false;
+            }
+        }
+  
+        public CardDeck CreateNewCardDeck(List<Card> PileCards)
+        {
+            var currentCard = PileCards.First();
+            CardDeck newDeck = new CardDeck(PileCards);
+            newDeck.Shuffle();
+            PileCards.Clear();
+            PileCards.Add(currentCard);
+            return newDeck;
+        }
     }
 }
 

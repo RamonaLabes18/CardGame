@@ -30,6 +30,10 @@ namespace Card_game
             Cards = new Stack<Card>(initialList);
 
         }
+        public CardDeck(List<Card> PileCards)
+        {
+            Cards = new Stack<Card>(PileCards);
+        }
         public Card Deal()
         {
             return Cards.Pop();
@@ -59,8 +63,6 @@ namespace Card_game
             }
         }
 
-
-        
     }
  }
     
