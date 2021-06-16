@@ -6,10 +6,10 @@ namespace Card_game.Games
 {
     public abstract class GameFactory
     {
-        protected abstract IGame MakeGame();
-        public IGame CreateGame()
+        protected abstract IGame MakeGame(CardDeck deck, List<Player> players);
+        public IGame CreateGame(CardDeck deck, List<Player> players)
         {
-            return this.MakeGame();
+            return this.MakeGame(deck, players);
         }
     }
 }

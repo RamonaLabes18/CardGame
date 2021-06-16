@@ -7,10 +7,9 @@ using System.Linq;
 namespace Card_game
 {
 
-    class Macaoua : ComunGameAction
+    class Macaoua : AbstractCardGame
     {
-        public CardDeck CardDeck { get; set; }
-        public List<Player> PlayerList { get; set; }
+      
         public List<Card> PileCards { get; set; }
 
         private LinkedList<Player> linkPlayers;
@@ -22,12 +21,8 @@ namespace Card_game
         private LinkedListNode<Player> currentPlayer;
 
         //operatii pt joc 
-        public Macaoua()
-        { }
-        public Macaoua(CardDeck deck, List<Player> players)
+        public Macaoua(CardDeck deck, List<Player> players) : base( deck, players)
         {
-            this.CardDeck = deck;
-            this.PlayerList = players;
             this.PileCards = new List<Card>();
             this.linkPlayers = new LinkedList<Player>(players);
             takeCards = new Dictionary<Player, bool>();
@@ -35,7 +30,6 @@ namespace Card_game
             {
                 takeCards.Add(player, false);
             }
-
         }
         //METODA PLAY PT ALGORITM
         
@@ -251,10 +245,9 @@ namespace Card_game
             return newDeck;
         }
 
-        public override Player play(CardDeck deck, List<Player> players)
+        public override Player Play()
         {
-            CardDeck = deck;
-            PlayerList = players;
+           
             DealCard();
             lastCard = CardDeck.Deal();
             lastCard = CheckPileCard(lastCard);

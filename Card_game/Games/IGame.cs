@@ -8,9 +8,9 @@ namespace Card_game.Games
     public interface IGame
     {
         string GetGameType();
-        CardDeck GetCardDeck();
-        List<Player> GetPlayerList();
-        Player play(CardDeck cardDeck, List<Player> players);
+        public CardDeck CardDeck { get; set; }
+        public List<Player> PlayerList { get; set; }
+        Player Play();
        
         
         //pachet de carti 

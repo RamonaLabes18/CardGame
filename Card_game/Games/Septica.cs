@@ -4,17 +4,20 @@ using System.Text;
 
 namespace Card_game.Games
 {
-    class Septica : ComunGameAction
+    class Septica : AbstractCardGame
     {
+        public Septica(CardDeck deck, List<Player> players) : base(deck, players)
+        {
+
+        }
       
         public override string GetGameType()
         {
             return "Septica";
         }
-
-        public override Player play(CardDeck cardDeck, List<Player> players)
+        public override Player Play()
         {
-            return players[0];
+            throw new NotImplementedException();
         }
     }
 }
